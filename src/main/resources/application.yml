@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;databaseName=clubbeer
+    username: sa
+    password: Pass@word
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  flyway:
+    url: jdbc:sqlserver://localhost:1433;databaseName=clubbeer
+    schemas: clubbeer
+    user: sa
+    password: Pass@word
+
