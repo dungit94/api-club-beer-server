@@ -3,7 +3,11 @@ package com.clubbeer.beer.service;
 import com.clubbeer.beer.entity.Beer;
 import com.clubbeer.beer.repository.IBeerRepository;
 import com.clubbeer.beer.resource.BeerResource;
+import com.clubbeer.common.response.ResultResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,9 +29,11 @@ public class BeerService {
         return new BeerResource(beer);
     }
 
-    public List<BeerResource> getBeerAll() {
-        List<Beer> beers = iBeerRepository.findAll();
-        return convertEntityToResource(beers);
+    public ResultResponse<BeerResource> getBeerAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Beer> beers = iBeerRepository.findAll(pageable);
+        return new ResultResponse<>(convertEntityToResource(beers.toList()),
+                beers.getTotalElements());
     }
 
     public BeerResource createBeer(BeerResource beerResource) {
