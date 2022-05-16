@@ -30,8 +30,8 @@ public class BeerController {
 
     @GetMapping(BASE_URL_BEERS)
     public ResponseEntity<ResultResponse<BeerResource>> findAll(
-            @RequestParam int page,
-            @RequestParam int size) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
         log.debug("REST request to get all Beers");
         return ResponseEntity.ok(beerService.getBeerAll(page, size));
     }

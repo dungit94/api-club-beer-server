@@ -5,6 +5,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -27,7 +29,7 @@ public class TokenProvider {
     private final Logger log = LoggerFactory.getLogger(TokenProvider.class);
 
     private static final String AUTHORITIES_KEY = "auth";
-    private static final String SECRET_KEY = "dungnq";
+    private static final String SECRET_KEY = "w1lnWEN63FPKxBNmxHN7WpfW2IoYVYca5moqIUKfWesL1Ykwv34iR5xwfWLyw1lnWEN63FPKxBNmxHN7WpfW2IoYVYca5moqIUKfWesL1Ykwv34iR5xwfWLyw1lnWEN63FPKxBNmxHN7WpfW2IoYVYca5moqIUKfWesL1Ykwv34iR5xwfWLyw1lnWEN63FPKxBNmxHN7WpfW2IoYVYca5moqIUKfWesL1Ykwv34iR5xwfWLy";
 
     private final Key key;
 
@@ -38,9 +40,14 @@ public class TokenProvider {
     private final long tokenValidityInMillisecondsForRememberMe;
 
     public TokenProvider() {
-        byte[] keyBytes = SECRET_KEY.getBytes(StandardCharsets.UTF_8);;
-        key = Keys.hmacShaKeyFor(keyBytes);
-        jwtParser = Jwts.parserBuilder().setSigningKey(key).build();
+        byte[] keyBytes;
+        if (!ObjectUtils.isEmpty(SECRET_KEY)) {
+            keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        } else {
+            keyBytes = SECRET_KEY.getBytes(StandardCharsets.UTF_8);
+        }
+        this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.jwtParser = Jwts.parserBuilder().setSigningKey(key).build();
         this.tokenValidityInMilliseconds = 1000 * 10;
         this.tokenValidityInMillisecondsForRememberMe = 1000 * 10;
     }
