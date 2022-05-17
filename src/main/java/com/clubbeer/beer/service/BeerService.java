@@ -6,15 +6,16 @@ import com.clubbeer.beer.resource.BeerResource;
 import com.clubbeer.common.response.ResultResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class BeerService {
     private final IBeerRepository iBeerRepository;
 
@@ -29,8 +30,7 @@ public class BeerService {
         return new BeerResource(beer);
     }
 
-    public ResultResponse<BeerResource> getBeerAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public ResultResponse<BeerResource> getBeerAll(Pageable pageable, String condition) {
         Page<Beer> beers = iBeerRepository.findAll(pageable);
         return new ResultResponse<>(convertEntityToResource(beers.toList()),
                 beers.getTotalElements());

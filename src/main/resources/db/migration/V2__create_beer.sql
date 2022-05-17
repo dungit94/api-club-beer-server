@@ -7,4 +7,5 @@ CREATE TABLE beer (
   category_id bigint NOT NULL,
   country_id bigint NOT NULL,
   manufacturer_id bigint NOT NULL,
+  CONSTRAINT PK_Beer_id PRIMARY KEY (id)
 );

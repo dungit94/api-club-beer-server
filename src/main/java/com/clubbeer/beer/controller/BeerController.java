@@ -7,6 +7,8 @@ import com.clubbeer.common.utils.HeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,10 +32,10 @@ public class BeerController {
 
     @GetMapping(BASE_URL_BEERS)
     public ResponseEntity<ResultResponse<BeerResource>> findAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @PageableDefault(page = 0, size = 20) Pageable pageable,
+            @RequestParam(defaultValue = "") String condition) {
         log.debug("REST request to get all Beers");
-        return ResponseEntity.ok(beerService.getBeerAll(page, size));
+        return ResponseEntity.ok(beerService.getBeerAll(pageable, condition));
     }
 
     @GetMapping(BASE_URL_BEERS + "/{id}")

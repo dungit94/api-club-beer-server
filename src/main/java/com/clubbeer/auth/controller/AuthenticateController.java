@@ -53,19 +53,29 @@ public class AuthenticateController {
      */
     static class JWTToken {
 
-        private String idToken;
+        private String token;
+        private String refreshToken;
 
-        JWTToken(String idToken) {
-            this.idToken = idToken;
+        JWTToken(String token) {
+            this.token = token;
         }
 
-        @JsonProperty("id_token")
-        String getIdToken() {
-            return idToken;
+        @JsonProperty("access_token")
+        String getToken() {
+            return token;
         }
 
-        void setIdToken(String idToken) {
-            this.idToken = idToken;
+        void setToken(String token) {
+            this.token = token;
+        }
+
+        @JsonProperty("refresh_token")
+        public String getRefreshToken() {
+            return refreshToken;
+        }
+
+        public void setRefreshToken(String refreshToken) {
+            this.refreshToken = refreshToken;
         }
     }
 }
