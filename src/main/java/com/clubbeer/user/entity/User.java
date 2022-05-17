@@ -1,5 +1,6 @@
 package com.clubbeer.user.entity;
 
+import com.clubbeer.common.auditing.AAuditingEntity;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -12,7 +13,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "beer_user")
 @Data
-public class User {
+public class User extends AAuditingEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
