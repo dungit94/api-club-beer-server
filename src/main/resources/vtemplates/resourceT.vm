@@ -1,0 +1,41 @@
+package ${packageName};
+
+import ${packageNameEntity};
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ${ClassResource} {
+
+#foreach( $property in $properties )
+    #if ($property.fieldName == "id")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private $property.fieldType $property.fieldName;
+
+    #else
+    @JsonProperty("${property.fieldName}")
+    private $property.fieldType $property.fieldName;
+
+    #end
+#end
+
+    public ${ClassResource}(${ClassEntity} entity) {
+    #foreach( $property in $properties )
+        #set($capitalizedFilename = ${property.fieldName})
+        this.${property.fieldName} = entity.get${capitalizedFilename};
+    #end
+    }
+
+    public ${ClassEntity} toEntity() {
+        return ${ClassEntity}.builder()
+    #foreach( $property in $properties )
+        #set($capitalizedFilename = ${property.fieldName})
+        .${property.fieldName}(this.${property.fieldName})
+    #end
+        .build();
+    }
+}

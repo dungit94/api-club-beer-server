@@ -1,0 +1,60 @@
+package ${packageName};
+
+import ${packageNameEntity};
+import ${packageNameRepository};
+import ${packageNameResource};
+import com.clubbeer.common.response.ResultResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+@Service
+@Transactional
+public class ${ClassName} {
+
+    private final ${IRepository} iRepository;
+
+    @Autowired
+    public ${ClassName} (${IRepository} iRepository) {
+        this.iRepository = iRepository;
+    }
+
+    public ${ClassResource} getResourceById(Long id) throws Exception {
+        ${ClassEntity} ${tableName}Entity = iRepository.findById(id)
+        .orElseThrow(() -> new Exception());
+        return new ${ClassResource}(${tableName}Entity);
+    }
+
+    public ResultResponse<${ClassResource}> getResourceAll(Pageable pageable, String condition) {
+        Page<${ClassEntity}> entities = iRepository.findAll(pageable);
+        return new ResultResponse<>(convertEntityToResource(entities.toList()), entities.getTotalElements());
+    }
+
+    public ${ClassResource} createResource(${ClassResource} resource) {
+        ${ClassEntity} entity = iRepository.save(resource.toEntity());
+        return new ${ClassResource}(entity);
+    }
+
+    public ${ClassResource} updateResource(Long id, ${ClassResource} resource) {
+        resource.setId(id);
+        ${ClassEntity} entity = iRepository.save(resource.toEntity());
+        return new ${ClassResource}(entity);
+    }
+
+    public void deleteResourceById(Long id) {
+        iRepository.deleteById(id);
+    }
+
+    public List<${ClassResource}> convertEntityToResource(List<${ClassEntity}> entities){
+        return entities.stream()
+        .filter(Objects::nonNull)
+        .map(${ClassResource}::new)
+        .collect(Collectors.toList());
+    }
+}

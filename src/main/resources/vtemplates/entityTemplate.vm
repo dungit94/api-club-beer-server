@@ -1,21 +1,40 @@
-package ${packagename};
+package ${packageName};
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.Serializable;
+
+@Entity
+@Table(name = "${tableName}")
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ${className} implements Serializable {
 
-/** Serial Version UID. */
-private static final long serialVersionUID = 1L;
+    /** Serial Version UID. */
+    private static final long serialVersionUID = 1L;
 
-#foreach( $property in $properties )
-private $property.fieldType $property.fieldName;
-#end
+    #foreach( $property in $properties )
+    #if ($property.fieldName == "id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "${property.fieldName}")
+    private $property.fieldType $property.fieldName;
 
-###foreach( $property in $properties )
-##public ${property.fieldType} get${property.getGetterAndSetterField()}() {
-##return this.${property.fieldName};
-##}
-##
-##public void set${property.getGetterAndSetterField()}(${property.fieldType} ${property.fieldName}) {
-##this.${property.fieldName} = ${property.fieldName};
-##}
-###end
+    #else
+    @Column(name = "${property.fieldName}")
+    private $property.fieldType $property.fieldName;
+
+    #end
+    #end
 }

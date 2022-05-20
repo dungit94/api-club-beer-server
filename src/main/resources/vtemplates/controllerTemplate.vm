@@ -1,0 +1,83 @@
+package ${packageName};
+
+import ${packageNameResource};
+import ${packageNameService};
+import com.clubbeer.common.response.ResultResponse;
+import com.clubbeer.common.utils.HeaderUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+@RestController
+@RequestMapping("/api")
+public class ${ClassName} {
+    private final Logger log = LoggerFactory.getLogger(${ClassName}.class);
+    private static final String ENTITY_NAME = "${tableName}";
+    private static final String BASE_URL = "/${tableName}";
+
+    private final ${ClassService} service;
+
+    @Autowired
+    public ${ClassName}(${ClassService} service) {
+        this.service = service;
+    }
+
+    @GetMapping(BASE_URL)
+    public ResponseEntity<ResultResponse<${ClassResource}>> findAll(
+        @PageableDefault(page = 0, size = 20) Pageable pageable,
+        @RequestParam(defaultValue = "") String condition) {
+        log.debug("REST request to get all Beers");
+        return ResponseEntity.ok(service.getResourceAll(pageable, condition));
+    }
+
+    @GetMapping(BASE_URL + "/{id}")
+    public ResponseEntity<${ClassResource}> findById(@PathVariable Long id) throws Exception {
+        log.debug("REST request to get Beers by id: ", id);
+        return ResponseEntity.ok(service.getResourceById(id));
+    }
+
+    @PostMapping(BASE_URL)
+    public ResponseEntity<${ClassResource}> createCategory(@Valid @RequestBody ${ClassResource} resource) throws URISyntaxException {
+        log.debug("REST request to save ${tableName} : {}", resource);
+        ${ClassResource} result = service.createResource(resource);
+        return ResponseEntity
+        .created(new URI(String.format("%s/%s", BASE_URL, result.getId())))
+        .headers(HeaderUtil.createEntityCreationAlert( true, ENTITY_NAME, result.getId().toString()))
+        .body(result);
+    }
+
+    @PutMapping(BASE_URL + "/{id}")
+    public ResponseEntity<${ClassResource}> updateResource(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody ${ClassResource} resource){
+        log.debug("REST request to update Beer : {}, {}", id, resource);
+        ${ClassResource} result = service.updateResource(id, resource);
+        return ResponseEntity
+        .ok()
+        .headers(HeaderUtil.createEntityUpdateAlert(true, ENTITY_NAME, result.getId().toString()))
+        .body(result);
+    }
+
+    @DeleteMapping(BASE_URL + "/{id}")
+    public ResponseEntity<Void> deleteCategoryById(@PathVariable Long id) {
+        log.debug("REST request to delete Beer");
+        service.deleteResourceById(id);
+        return ResponseEntity.noContent().build();
+    }
+}
